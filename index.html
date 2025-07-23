@@ -758,7 +758,7 @@
   <strong>Taux autoprod :</strong>
   <span id="tauxAutoprodForced">-</span> %
 </p>
-
+<div id="grenkeOptions" style="margin-top:10px; font-size:0.9em;"></div>
           </div>
             
           <label for="forcedPower">Installation choisie (kWc) :</label>
@@ -1819,14 +1819,30 @@ document.getElementById("calculateTresorerieBtn")
     /***************************************************
      * Calcul du cout de l installation
      ***************************************************/
-    function costInstallation(S, territory){
-      let raw;
-      if (S <= 40) { raw = S * ((1.8596184 - (0.00660593 * S))) * 1000; }
-      else { raw = S * 1.60 * 1000; }
-      if (territory === "Corse") { raw *= 1.00; }
-      else if (territory === "Reunion") { raw *= 1.13; }
-      return Math.round(raw / 100) * 100;
-    }
+    /**
+ * Calcule le coût HT de l'installation en arrondissant à la centaine supérieure.
+ * @param {number} S         Puissance installée (kWc)
+ * @param {string} territory "France Metropolitaine" | "Corse" | "Reunion"
+ * @returns {number}         Coût HT arrondi
+ */
+function costInstallation(S, territory) {
+  // 1) prix du Wc décroissant, plafonné à 1.25 €/Wc
+  let pricePerWc = 1.76 - 0.01 * S;
+  if (pricePerWc < 1.25) pricePerWc = 1.25;
+
+  // 2) coût brut en euros
+  let raw = S * 1000 * pricePerWc;
+
+  // 3) ajustement territorial
+  if (territory === "Reunion") {
+    raw *= 1.13;
+  }
+  // (Corse et Métropole : facteur ×1, inutile à coder)
+
+  // 4) arrondi à la centaine supérieure
+  return Math.ceil(raw / 100) * 100;
+}
+
     function getClosedDaysFraction() {
       const closedDays = [];
       document.querySelectorAll('input[name="joursConges[]"]:checked').forEach(chk => closedDays.push(chk.value));
@@ -2480,9 +2496,9 @@ document.getElementById("forcedPower").value = bestS;
       document.getElementById("monthlyTotalRevPercForced").textContent = finalRevPerc.toFixed(1)+"%";
       createMonthlyBarChartForced(moisNoms, chartConso, chartAuto, chartRev);
     }
-    const applyForcedPreconisationBtn = document.getElementById("applyForcedPreconisationBtn");
-    applyForcedPreconisationBtn.addEventListener("click", () => {
-  const territory = document.getElementById("territory").value || "France Metropolitaine";
+   const applyForcedPreconisationBtn = document.getElementById("applyForcedPreconisationBtn");
+applyForcedPreconisationBtn.addEventListener("click", () => {
+  const territory = document.getElementById("territory").value || "France Métropolitaine";
   const forcedPowerStr = document.getElementById("forcedPower").value || "1";
   let S = parseFloat(forcedPowerStr);
   if (isNaN(S) || S <= 0) {
@@ -2510,8 +2526,7 @@ document.getElementById("forcedPower").value = bestS;
   const ecoMoy = (brut / 240).toFixed(2);
   document.getElementById("ecoMoyMensuelleForced").textContent = ecoMoy;
 
-  // ──────────────── ICI ────────────────
-  // Calcul de HT à partir du coût et de la remise
+  // ─────────── Calcul du loyer/durée optimal pour Grenke ───────────
   const coutInst     = parseFloat(
     document.getElementById("coutInstallationForced")
       .textContent.replace(/[^0-9.-]+/g, "")
@@ -2521,7 +2536,6 @@ document.getElementById("forcedPower").value = bestS;
   ) || 0;
   const HT           = coutInst - remiseForced;
 
-  // Choix du nombre de loyers minimal selon économies (avec fallback au plus proche)
   const terms = [60, 72, 84, 96];
   const ecoMens = parseFloat(ecoMoy) || 0;
   let chosenTerm = null;
@@ -2531,8 +2545,7 @@ document.getElementById("forcedPower").value = bestS;
   for (const t of terms) {
     const f = getGrenkeFactor(HT, t);
     if (f === null) continue;
-
-   const monthlyLoyer = (HT * f) / 100;
+    const monthlyLoyer = (HT * f) / 100;
     if (monthlyLoyer <= ecoMens) {
       chosenTerm  = t;
       chosenLoyer = monthlyLoyer;
@@ -2548,20 +2561,41 @@ document.getElementById("forcedPower").value = bestS;
 
   document.getElementById("loyerForced").textContent  = chosenLoyer.toFixed(2);
   document.getElementById("dureeForced").textContent = chosenTerm || 0;
-  // ───────────── FIN DU BLOC ────────────
+  document.getElementById("leaseDuration").value = chosenTerm || 0;
+  // ─────────── FIN du calcul loyer/durée ───────────
 
-  // … le reste éventuel de ton code …
+  // ─────────── Affichage de toutes les options Grenke ───────────
+  const grenkeContainer = document.getElementById("grenkeOptions");
+  grenkeContainer.innerHTML = "<strong>Options Grenke :</strong>";
+
+  // Si montant HT trop faible
+  if (HT < 12501) {
+    const msg = document.createElement("div");
+    msg.textContent = "Leasing Grenke non disponible pour un montant HT < 12 501 €.";
+    grenkeContainer.appendChild(msg);
+  } else {
+    const possibleTerms = [60, 72, 84, 96];
+    possibleTerms.forEach(term => {
+      const factor = getGrenkeFactor(HT, term);
+      const line = document.createElement("div");
+      if (factor !== null) {
+        const monthly = (HT * factor / 100).toFixed(2);
+        line.textContent = `${term} mois : ${monthly} €/mois`;
+      } else {
+        line.textContent = `${term} mois : non disponible`;
+      }
+      grenkeContainer.appendChild(line);
+    });
+  }
+  // ───────────────────────────────────────────────────────────────
 });
 
+// Initialisation de Flatpickr pour la date de RDV
+flatpickr("#rdvDate", {
+  locale: "fr",
+  dateFormat: "d/m/Y"
+});
 
-
- 
-
-    
-    flatpickr("#rdvDate", {
-      locale: "fr",
-      dateFormat: "d/m/Y"
-    });
 
     /***************************************************
      * FONCTION DE GÉNÉRATION DU RAPPORT PDF (5 pages) AVEC FUSION DU TEMPLATE
@@ -3217,6 +3251,10 @@ if (showTreso) {
 // ---------------------------------------------------------------
 const batchReportBtn = document.getElementById('batchReportBtn');
 batchReportBtn.addEventListener('click', () => {
+  const forcedPowerInput = document.getElementById('forcedPower');
+  const remiseInput      = document.getElementById('remiseForced');
+  const origPower  = forcedPowerInput.value;
+  const origRemise = remiseInput.value;
   // 1) Récupérer Smax depuis l’onglet 2
   const maxPower = parseFloat(
     document.getElementById('puissanceMaxPV').value.replace(/\s|,/g, '')
@@ -3267,26 +3305,31 @@ batchReportBtn.addEventListener('click', () => {
     const roi         = clean(document.getElementById('roiResultForced').textContent);
 
     // choix loyer/durée minimal comme dans l’onglet 9
-    const HT         = (parseFloat(costInst)||0) - (parseFloat(remise)||0);
-    const terms      = [60,72,84,96];
-    let chosenTerm   = null, chosenLoyer = 0, minDelta = Infinity;
-    terms.forEach(t => {
-      const f = getGrenkeFactor(HT, t);
-      if (f===null) return;
-      const monthly = Math.floor(HT * f / 100);
-      const delta = Math.abs(monthly - ecoMensuelle);
-      if (monthly <= ecoMensuelle && chosenTerm===null) {
-        chosenTerm = t; chosenLoyer = monthly;
-      } else if (delta < minDelta) {
-        minDelta = delta; chosenTerm = t; chosenLoyer = monthly;
-      }
-    });
+    const HT    = (parseFloat(costInst) || 0) - (parseFloat(remise) || 0);
+const terms = [60, 72, 84, 96];
 
-    // mémoriser la première S atteignant le taux cible
-    const currentPct = parseFloat(pctProd) || 0;
-    if (chosenSForAutoprod === null && currentPct >= targetRate) {
-      chosenSForAutoprod = S;
-    }
+let chosenTerm    = null;
+let chosenLoyer   = 0;
+let smallestDelta = Infinity;
+
+for (const t of terms) {
+  const f = getGrenkeFactor(HT, t);
+  if (f === null) continue;
+
+  const monthly = (HT * f) / 100;
+  if (monthly <= ecoMensuelle) {
+    chosenTerm  = t;
+    chosenLoyer = monthly;
+    break;
+  }
+  const delta = Math.abs(monthly - ecoMensuelle);
+  if (delta < smallestDelta) {
+    smallestDelta = delta;
+    chosenTerm  = t;
+    chosenLoyer = monthly;
+  }
+}
+
 
     body.push([
       S.toFixed(1), conso, prod, autoKwh, revKwh,
@@ -3420,9 +3463,26 @@ batchReportBtn.addEventListener('click', () => {
     const puissanceValue = (installedKWc * 1000).toString();
     const phoneValue     = document.getElementById('telephone').value.trim()          || '';
     const emailValue     = document.getElementById('email').value.trim()              || '';
-    const bailleur       = document.getElementById('leasingCompany').value.trim()     || '';
-    const nbLoyer        = document.getElementById('dureeForced').textContent.trim()  || '';
-    const loyer          = document.getElementById('loyerForced').textContent.trim()  || '';
+    // 1) Récupération du bailleur depuis l’onglet plan de trésorerie
+  const bailleur = document.getElementById('leasingCompany').value.trim() || '';
+
+  // 2) Nombre de loyers → valeur saisie dans #leaseDuration
+  const nbLoyer = document.getElementById('leaseDuration').value.trim() || '';
+
+  // 3) Montant mensuel → on prend le poste "Loyer / Remboursement" de l’année 1 dans le plan de trésorerie,
+  //    et on le divise par 12
+  let loyer = '';
+  const planTable = document.getElementById('planTresorerieTable');
+  if (planTable) {
+    // on cible la première ligne de tbody (année 1)
+    const firstRow = planTable.querySelector('#planTresorerieBody tr');
+    if (firstRow && firstRow.cells.length >= 3) {
+     const annualTxt = firstRow.cells[2].textContent || '0';
+      const annualVal = parseFloat( annualTxt.replace(/[^0-9\.-]+/g, '') ) || 0;
+      loyer = (annualVal / 12).toFixed(2);
+    }
+  }
+
     const marqueModule   = document.getElementById('marqueModuleSelect').value       || '';
     const nbrOnduleurs   = document.getElementById('nbrOnduleurs').value.trim()      || '1';
     const marqueOnduleur = document.getElementById('marqueOnduleurSelect').value     || '';
