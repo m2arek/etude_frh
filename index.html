@@ -1828,7 +1828,7 @@ document.getElementById("calculateTresorerieBtn")
 function costInstallation(S, territory) {
   // 1) prix du Wc décroissant, plafonné à 1.25 €/Wc
   let pricePerWc = 1.76 - 0.01 * S;
-  if (pricePerWc < 1.25) pricePerWc = 1.25;
+  if (pricePerWc < 1.40) pricePerWc = 1.40;
 
   // 2) coût brut en euros
   let raw = S * 1000 * pricePerWc;
