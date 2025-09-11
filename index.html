@@ -1071,49 +1071,56 @@
       }
     };
 
-   /**
- * Détecte "France Métropolitaine" / "Corse" / "Reunion" depuis un CP.
- */
-function detectTerritoryFromZip(cpStr) {
-  if (!cpStr || cpStr.length < 2) return "France Métropolitaine";
-  const prefix2 = cpStr.substring(0, 2);
-  if (prefix2 === "20") return "Corse";
-  if (prefix2 === "97") return "Reunion";
-  return "France Métropolitaine";
-}
+    /***************************************************
+     * SECTION UTILITAIRE TERRITOIRE
+     * Regroupe detectTerritoryFromZip, syncTerritoryFromSocieteAddress,
+     * getTerritorySuffix et getTemplateName
+     ***************************************************/
 
-/**
- * Lit l’adresse dans #Adresse, en extrait le CP
- * et met à jour le champ #territory en conséquence.
- */
-function syncTerritoryFromSocieteAddress() {
-  const adresse = document.getElementById('Adresse').value.trim();
-  const matchCp = adresse.match(/\b(\d{5})\b/);
-  if (matchCp) {
-    const territory = detectTerritoryFromZip(matchCp[1]);
-    document.getElementById('territory').value = territory;
-  }
-}
+    /**
+     * Détecte "France Métropolitaine" / "Corse" / "Reunion" depuis un CP.
+     */
+    function detectTerritoryFromZip(cpStr) {
+      if (!cpStr || cpStr.length < 2) return "France Métropolitaine";
+      const prefix2 = cpStr.substring(0, 2);
+      if (prefix2 === "20") return "Corse";
+      if (prefix2 === "97") return "Reunion";
+      return "France Métropolitaine";
+    }
 
-/**
- * Renvoie "metropole", "corse" ou "reunion"
- * en fonction de la valeur courante de #territory.
- */
-function getTerritorySuffix() {
-  const t = document.getElementById('territory').value;
-  if (t === 'Corse')   return 'corse';
-  if (t === 'Reunion') return 'reunion';
-  return 'metropole';
-}
-/**
- * Construit le nom du template PDF,
- * en synchronisant d’abord le territoire depuis l’onglet société.
- * Exemple : getTemplateName('cps') → "cps_metropole.pdf"
- */
-function getTemplateName(base) {
-  syncTerritoryFromSocieteAddress();
-  return `${base}_${getTerritorySuffix()}.pdf`;
-}
+    /**
+     * Lit l’adresse dans #Adresse, en extrait le CP
+     * et met à jour le champ #territory en conséquence.
+     */
+    function syncTerritoryFromSocieteAddress() {
+      const adresse = document.getElementById('Adresse').value.trim();
+      const matchCp = adresse.match(/\b(\d{5})\b/);
+      if (matchCp) {
+        const territory = detectTerritoryFromZip(matchCp[1]);
+        document.getElementById('territory').value = territory;
+      }
+    }
+
+    /**
+     * Renvoie "metropole", "corse" ou "reunion"
+     * en fonction de la valeur courante de #territory.
+     */
+    function getTerritorySuffix() {
+      const t = document.getElementById('territory').value;
+      if (t === 'Corse')   return 'corse';
+      if (t === 'Reunion') return 'reunion';
+      return 'metropole';
+    }
+
+    /**
+     * Construit le nom du template PDF,
+     * en synchronisant d’abord le territoire depuis l’onglet société.
+     * Exemple : getTemplateName('cps') → "cps_metropole.pdf"
+     */
+    function getTemplateName(base) {
+      syncTerritoryFromSocieteAddress();
+      return `${base}_${getTerritorySuffix()}.pdf`;
+    }
     /***************************************************
      *  INITIALISATION PAGE
      ***************************************************/
@@ -3419,28 +3426,6 @@ for (const t of terms) {
   document.getElementById('applyForcedPreconisationBtn').click();
 });
 
-// Détecte "France Métropolitaine" / "Corse" / "Reunion" depuis un CP
-  function detectTerritoryFromZip(cpStr) {
-    if (!cpStr || cpStr.length < 2) return "France Métropolitaine";
-    const prefix2 = cpStr.substring(0, 2);
-    if (prefix2 === "20") return "Corse";
-    if (prefix2 === "97") return "Reunion";
-    return "France Métropolitaine";
-  }
-
-  // Renvoie "metropole", "corse" ou "reunion" en fonction de #territory
-  function getTerritorySuffix() {
-    const t = document.getElementById('territory').value;
-    if (t === 'Corse')   return 'corse';
-    if (t === 'Reunion') return 'reunion';
-    return 'metropole';
-  }
-
-  // Construit le nom du template PDF (ex: "cps_metropole.pdf")
-  function getTemplateName(base) {
-    return `${base}_${getTerritorySuffix()}.pdf`;
-  }
-
   // Gestion du click sur "Générer CPS"
   document.getElementById('generateCpsBtn').addEventListener('click', async () => {
     // 1) Lecture de l'adresse saisie dans l'onglet 1
@@ -3547,52 +3532,6 @@ for (const t of terms) {
 
 
 // --- Génération du PDF “Mandats” ---
-/**
- * Détecte le territoire à partir d’un code postal (string de 5 chiffres)
- * et renvoie “France Metropolitaine”, “Corse” ou “Reunion”
- */
-function detectTerritoryFromZip(cpStr) {
-  if (!cpStr || cpStr.length < 2) return "France Metropolitaine";
-  const prefix2 = cpStr.substring(0, 2);
-  if (prefix2 === "20") return "Corse";
-  if (prefix2 === "97") return "Reunion";
-  return "France Metropolitaine";
-}
-
-/**
- * Lit la valeur du champ #Adresse, en extrait le CP,
- * et met à jour le champ #territory en conséquence.
- */
-function syncTerritoryFromSocieteAddress() {
-  const adresse = document.getElementById('Adresse').value.trim();
-  const m = adresse.match(/\b(\d{5})\b/);
-  if (m) {
-    document.getElementById('territory').value =
-      detectTerritoryFromZip(m[1]);
-  }
-}
-
-/**
- * Renvoie “metropole”, “corse” ou “reunion”
- * d’après la valeur du champ #territory
- */
-function getTerritorySuffix() {
-  const t = document.getElementById('territory').value;
-  if (t === 'Corse')   return 'corse';
-  if (t === 'Reunion') return 'reunion';
-  return 'metropole';
-}
-
-/**
- * Construit le nom du template PDF en fonction du suffixe
- * Exemple : getTemplateName('mandats') → "mandats_metropole.pdf"
- */
-function getTemplateName(base) {
-  // On resynchronise toujours juste avant de nommer
-  syncTerritoryFromSocieteAddress();
-  return `${base}_${getTerritorySuffix()}.pdf`;
-}
-
 // Onglet Mandats : génération du PDF pré-rempli
 document.getElementById('generateMandatsBtn').addEventListener('click', async () => {
   // Synchronisation territoire depuis l'adresse société
@@ -3644,53 +3583,6 @@ document.getElementById('generateMandatsBtn').addEventListener('click', async ()
   link.download  = `Mandats_${companyName}.pdf`;
   link.click();
 });
-
-/**
- * Détecte le territoire à partir d’un code postal (string de 5 chiffres)
- * et renvoie “France Metropolitaine”, “Corse” ou “Reunion”
- */
-function detectTerritoryFromZip(cpStr) {
-  if (!cpStr || cpStr.length < 2) return "France Metropolitaine";
-  const prefix2 = cpStr.substring(0, 2);
-  if (prefix2 === "20") return "Corse";
-  if (prefix2 === "97") return "Reunion";
-  return "France Metropolitaine";
-}
-
-/**
- * Lit la valeur du champ #Adresse, en extrait le CP,
- * et met à jour le champ #territory en conséquence.
- */
-function syncTerritoryFromSocieteAddress() {
-  const adresse = document.getElementById('Adresse').value.trim();
-  const m = adresse.match(/\b(\d{5})\b/);
-  if (m) {
-    document.getElementById('territory').value =
-      detectTerritoryFromZip(m[1]);
-  }
-}
-
-/**
- * Renvoie “metropole”, “corse” ou “reunion”
- * d’après la valeur du champ #territory
- */
-function getTerritorySuffix() {
-  const t = document.getElementById('territory').value;
-  if (t === 'Corse')   return 'corse';
-  if (t === 'Reunion') return 'reunion';
-  return 'metropole';
-}
-
-/**
- * Construit le nom du template PDF en fonction du suffixe
- * Exemple : getTemplateName('Contrat_maintenance') →
- *            "Contrat_maintenance_metropole.pdf"
- */
-function getTemplateName(base) {
-  // on s'assure de toujours resynchroniser avant
-  syncTerritoryFromSocieteAddress();
-  return `${base}_${getTerritorySuffix()}.pdf`;
-}
 
 // Onglet Contrat maintenance : génération du PDF pré-rempli
 document.getElementById('generateMaintenanceBtn').addEventListener('click', async () => {
@@ -3755,50 +3647,6 @@ document.getElementById('generateMaintenanceBtn').addEventListener('click', asyn
 });
 
 
-/**
- * Détecte le territoire à partir d’un code postal (string de 5 chiffres)
- * et renvoie “France Métropolitaine”, “Corse” ou “Reunion”
- */
-function detectTerritoryFromZip(cpStr) {
-  if (!cpStr || cpStr.length < 2) return "France Metropolitaine";
-  const prefix2 = cpStr.substring(0, 2);
-  if (prefix2 === "20") return "Corse";
-  if (prefix2 === "97") return "Reunion";
-  return "France Metropolitaine";
-}
-
-/**
- * Lit la valeur du champ #Adresse, en extrait le CP,
- * et met à jour le champ #territory en conséquence.
- */
-function syncTerritoryFromSocieteAddress() {
-  const adresse = document.getElementById('Adresse').value.trim();
-  const m = adresse.match(/\b(\d{5})\b/);
-  if (m) {
-    document.getElementById('territory').value =
-      detectTerritoryFromZip(m[1]);
-  }
-}
-
-/**
- * Renvoie “metropole”, “corse” ou “reunion”
- * en fonction de la valeur du champ #territory
- */
-function getTerritorySuffix() {
-  const t = document.getElementById('territory').value;
-  if (t === 'Corse')   return 'corse';
-  if (t === 'Reunion') return 'reunion';
-  return 'metropole';
-}
-
-/**
- * Construit le nom du template PDF,
- * ex: getTemplateName('devis') → "devis_metropole.pdf"
- */
-function getTemplateName(base) {
-  syncTerritoryFromSocieteAddress();
-  return `${base}_${getTerritorySuffix()}.pdf`;
-}
 
 // Onglet Devis : génération du PDF pré-rempli
 document.getElementById('generateDevisBtn').addEventListener('click', async () => {
