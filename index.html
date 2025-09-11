@@ -3783,9 +3783,12 @@ function syncTerritoryFromSocieteAddress() {
 /**
  * Renvoie “metropole”, “corse” ou “reunion”
  * en fonction de la valeur du champ #territory
+ * ou du paramètre passé.
  */
-function getTerritorySuffix() {
-  const t = document.getElementById('territory').value;
+function getTerritorySuffix(territory) {
+  const t = territory !== undefined
+    ? territory
+    : document.getElementById('territory').value;
   if (t === 'Corse')   return 'corse';
   if (t === 'Reunion') return 'reunion';
   return 'metropole';
@@ -3795,9 +3798,8 @@ function getTerritorySuffix() {
  * Construit le nom du template PDF,
  * ex: getTemplateName('devis') → "devis_metropole.pdf"
  */
-function getTemplateName(base) {
-  syncTerritoryFromSocieteAddress();
-  return `${base}_${getTerritorySuffix()}.pdf`;
+function getTemplateName(base, territory) {
+  return `${base}_${getTerritorySuffix(territory)}.pdf`;
 }
 
 // Onglet Devis : génération du PDF pré-rempli
