@@ -1118,7 +1118,11 @@
      * Exemple : getTemplateName('cps') → "cps_metropole.pdf"
      */
     function getTemplateName(base) {
-      syncTerritoryFromSocieteAddress();
+      const territoryField = document.getElementById('territory');
+      // Ne resynchronise depuis l'adresse que si aucun territoire spécifique n'est choisi
+      if (!territoryField.value || territoryField.value === 'France Métropolitaine') {
+        syncTerritoryFromSocieteAddress();
+      }
       return `${base}_${getTerritorySuffix()}.pdf`;
     }
     /***************************************************
@@ -3434,9 +3438,14 @@ for (const t of terms) {
     const m             = recherche.match(/(\d{5})\s*(.*)$/);
     const cp            = m ? m[1] : '';
     const ville         = m ? m[2] : '';
-    // 1b) Mise à jour instantanée du territoire
-    const territory     = detectTerritoryFromZip(cp);
-    document.getElementById('territory').value = territory;
+    // 1b) Mise à jour du territoire uniquement si le CP indique Corse ou Réunion
+    const territoryInput = document.getElementById('territory');
+    if (cp) {
+      const detected = detectTerritoryFromZip(cp);
+      if (detected !== 'France Métropolitaine') {
+        territoryInput.value = detected;
+      }
+    }
     // 1c) Partie avant le code postal pour l'adresse
     const adresseOnly   = recherche.replace(/\s*\d{5}.*$/, '').trim();
 
