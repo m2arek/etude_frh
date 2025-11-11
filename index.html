@@ -6,46 +6,46 @@
 
 
 
- /* ********<!DOCTYPE html>
- /* ********<html lang="fr">
- /* ********<head>
-   /* ********<meta charset="UTF-8" />
-   /* ********<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-   /* ********<title>FRH PRO - Etude</title> 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>FRH PRO - Etude</title> 
 
-   /* ********<!-- (1) Leaflet CSS -->
-   /* ********<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
-  /* ******** <!-- (2) Leaflet Draw + GeometryUtil CSS -->
-  /* ******** <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
-  /* ******** <!-- Liens CSS pour Flatpickr -->
-   /* ********<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <!-- (1) Leaflet CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- (2) Leaflet Draw + GeometryUtil CSS -->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+   <!-- Liens CSS pour Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-   /* ********<!-- (3) Leaflet JS -->
-  /* ******** <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-   /* ********<!-- (4) Leaflet Draw JS -->
-   }/* ********<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-   /* ********<!-- (5) GeometryUtil (pour la surface) -->
-   /* ********<script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
-   /* ********<!-- (6) html2canvas + jsPDF -->
-   /* ********<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-   /* ********<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-  /* ******** <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  /* ******** <!-- Script de localisation français pour Flatpickr -->
-   /* ********<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+   <!-- (3) Leaflet JS -->
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+   <!-- (4) Leaflet Draw JS -->
+   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <!-- (5) GeometryUtil (pour la surface) -->
+   <script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
+ <!-- (6) html2canvas + jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Script de localisation français pour Flatpickr -->
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
   
-  /* ******** <!-- Chart.js pour le diagramme en barres -->
-   /* ********<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <!-- Chart.js pour le diagramme en barres -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-   /* ********<!-- jspdf-autotable -->
-  /* ******** <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <!-- jspdf-autotable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   
-  /* ******** <!-- Inclusion de pdf-lib pour la fusion de PDF -->
-   /* ********<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<!-- Inclusion de pdf-lib pour la fusion de PDF -->
+   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   
-  /* ******** <!-- Fontkit UMD pour le navigateur -->
- /* ********<script src="https://unpkg.com/@pdf-lib/fontkit@latest/dist/fontkit.umd.js"></script>
+ <!-- Fontkit UMD pour le navigateur -->
+<script src="https://unpkg.com/@pdf-lib/fontkit@latest/dist/fontkit.umd.js"></script>
 
-  /* ******** <style>
+ <style>
     /****************************************************
      * STYLES GÉNÉRAUX
      ****************************************************/
@@ -321,7 +321,7 @@
 
     <!-- Barre d'onglets fixe -->
     <div class="tabNav" id="topTabNav">
-      <button type="button" class="tablinks" onclick="openTab(event, 'tab1')">1. Localisation / Données Irradiation</button>
+      <button type="button" class="tablinks" onclick="openTab(event, 'tab1')">1. Localisation / Données Irradiation
       <button type="button" class="tablinks" onclick="openTab(event, 'tab2')">2. Potentiel de Production</button>
       <button type="button" class="tablinks" onclick="openTab(event, 'tab3')">3. Production mensuel</button>
       <button type="button" class="tablinks" onclick="openTab(event, 'tab4')">4. Infos société</button>
